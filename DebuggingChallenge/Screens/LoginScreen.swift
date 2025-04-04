@@ -18,13 +18,12 @@ import SwiftUI
  */
 struct LoginScreen: View {
     @StateObject var auth = AuthenticationManager()
-    let onSuccess: () -> Void
-
     let sessionService: SessionService = DefaultSessionService()
+    let onSuccess: () -> Void
 
     var body: some View {
         VStack(spacing: 32) {
-            SecurityBannerView(sessionService: sessionService)
+            SecurityBannerView(lastUserName: auth.username, sessionService: sessionService)
             LoginFormView(sessionService: sessionService, onSuccess: onSuccess)
         }
         .padding(24)

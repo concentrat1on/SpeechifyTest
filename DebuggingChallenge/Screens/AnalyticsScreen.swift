@@ -7,7 +7,7 @@ struct AnalyticsScreen: View {
 
     var body: some View {
         NavigationStack(path: $coordinator.path) {
-            if viewModel.analyticsDetails.isEmpty {
+            if viewModel.isLoading {
                 Loader(progress: $loaderProgress, animated: true)
                     .frame(width: 64, height: 64)
             } else {

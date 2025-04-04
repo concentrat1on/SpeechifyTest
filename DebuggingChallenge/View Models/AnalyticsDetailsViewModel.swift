@@ -2,20 +2,23 @@ import Combine
 
 class AnalyticsDetailsViewModel: ObservableObject {
     @Published var recentProjects: [Project] = []
-    @Published var isLoading: Bool = false
     let projectService: ProjectService
+    
+    private var task: Task<Void, Never>?
 
     init(projectService: ProjectService) {
+        print(#function)
         self.projectService = projectService
     }
 
     @MainActor
     func loadRecentProjects() {
-        Task {
-            isLoading = true
+        guard recentProjects.isEmpty,
+              task == nil else { return }
+        
+        task = Task {
             let projects = await projectService.fetchProjects()
             recentProjects = projects
-            isLoading = false
         }
     }
 }

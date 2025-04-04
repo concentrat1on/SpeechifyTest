@@ -42,7 +42,6 @@ final class DefaultReminderService: ReminderService {
     func fetchReminders(completion: @escaping ([Reminder]) -> Void) {
         let dispatchGroup = DispatchGroup()
         var reminders: [Reminder] = []
-        print(reminders.count)
         for _ in 0 ..< 3 {
             dispatchGroup.enter()
             dataSource.fetchReminders {
@@ -51,7 +50,6 @@ final class DefaultReminderService: ReminderService {
             }
         }
 
-        print(reminders.count)
         dispatchGroup.notify(queue: .main) {
             completion(reminders)
         }
@@ -73,13 +71,19 @@ final class DefaultReminderService: ReminderService {
     }
 
     func fetchRemindersAsync() async -> [Reminder] {
-        var reminders: [Reminder] = []
-
-        for _ in 0..<3 {
-            reminders.append(contentsOf: await self.dataSource.fetchReminders())
+        let tasks = (0..<3).map { _ in
+            Task {
+                await dataSource.fetchReminders()
+            }
         }
 
-        return reminders
+        var results: [[Reminder]] = []
+
+        for task in tasks {
+            results.append(await task.value)
+        }
+
+        return results.flatMap { $0 }
     }
 }
 /*

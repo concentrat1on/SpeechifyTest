@@ -10,7 +10,7 @@ struct LoginFormView: View {
     private var isInvalid: Bool {
         auth.username.isEmpty || tempPassword.isEmpty
     }
-
+    
     var body: some View {
         VStack(spacing: 24) {
             TextField("Username", text: $tempUsername)

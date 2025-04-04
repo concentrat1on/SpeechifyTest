@@ -2,8 +2,9 @@ import Charts
 import SwiftUI
 
 struct AnalyticsDetailsScreen: View {
+    @EnvironmentObject var coordinator: MainCoordinator
     let details: AnalyticsDetails
-    @ObservedObject var viewModel: AnalyticsDetailsViewModel
+    @StateObject var viewModel: AnalyticsDetailsViewModel
     @State private var loaderProgress: Float = 0.0
 
     var body: some View {
@@ -41,7 +42,7 @@ struct AnalyticsDetailsScreen: View {
             .frame(height: 200)
 
             Section("Recent Projects") {
-                if viewModel.isLoading {
+                if viewModel.recentProjects.isEmpty {
                     HStack {
                         Spacer()
                         Loader(progress: $loaderProgress, animated: true)
@@ -50,9 +51,12 @@ struct AnalyticsDetailsScreen: View {
                     }
                 } else {
                     ForEach(viewModel.recentProjects) { project in
-                        NavigationLink(value: project) {
+                        Button {
+                            coordinator.navigateToProject(project)
+                        } label: {
                             Text(project.name)
                         }
+
                     }
                 }
             }
